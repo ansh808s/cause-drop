@@ -16,18 +16,19 @@ model User {
 }
 
 model Campaign {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   description String
   recipient   String
-  slug        String   @unique
-  imageUrl    String   @map("image_url")
-  createdAt   DateTime @default(now()) @map("created_at")
-  userId      String   @map("user_id")
-  user        User     @relation(fields: [userId], references: [id])
+  slug        String     @unique
+  imageUrl    String     @map("image_url")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  userId      String     @map("user_id")
+  user        User       @relation(fields: [userId], references: [id])
   goal        Float
-  totalRaised Float    @map("total_raised")
-  donations Donation[]
+  totalRaised Float      @map("total_raised")
+  active      Boolean    @default(true)
+  donations   Donation[]
 }
 
 model Donation {
