@@ -32,4 +32,11 @@ export const signinSchema = z
   })
   .strict();
 
+export const verifySchema = z
+  .object({
+    token: z.string().min(1, "Token is required"),
+  })
+  .strict();
+
 export type SigninRequest = z.infer<typeof signinSchema>;
+export type VerifyRequest = z.infer<typeof verifySchema>;
