@@ -17,19 +17,23 @@
     "schema": "./prisma/schema"
   },
   "dependencies": {
-    "dotenv": "^16.4.7",
-    "zod": "^3.25.16",
-    "express": "^5.1.0",
+    "@prisma/client": "^6.7.0",
+    "@solana/web3.js": "^1.98.2",
+    "bs58": "^6.0.0",
     "cors": "^2.8.5",
-    "@prisma/client": "^6.7.0"
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "tweetnacl": "^1.0.3",
+    "zod": "^3.25.16"
   },
   "devDependencies": {
-    "tsc-alias": "^1.8.11",
-    "typescript": "^5.8.2",
-    "@types/express": "^5.0.1",
     "@types/cors": "^2.8.17",
-    "tsx": "^4.19.2",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.11",
-    "prisma": "^6.7.0"
+    "prisma": "^6.7.0",
+    "tsc-alias": "^1.8.11",
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.2"
   }
 }
