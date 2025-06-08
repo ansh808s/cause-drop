@@ -1,9 +1,19 @@
 generator client {
   provider = "prisma-client-js"
-  output = "../generated"
+  output   = "../generated"
 }
 
 datasource db {
   provider = "postgres"
   url      = env("DATABASE_URL")
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  recipient   String
+  slug        String   @unique
+  imageUrl    String   @map("image_url")
+  createdAt   DateTime @default(now()) @map("created_at")
 }
