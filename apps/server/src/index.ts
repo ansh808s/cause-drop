@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import { router } from "./routers";
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use("/api", router);
 
 app.get("/", (_req, res) => {
   res.status(200).send("OK");
