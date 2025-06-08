@@ -9,11 +9,22 @@ datasource db {
 }
 
 model Campaign {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   description String
   recipient   String
-  slug        String   @unique
-  imageUrl    String   @map("image_url")
-  createdAt   DateTime @default(now()) @map("created_at")
+  slug        String     @unique
+  imageUrl    String     @map("image_url")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  donations   Donation[]
+}
+
+model Donation {
+  id         String   @id @default(cuid())
+  campaignId String   @map("campaign_id")
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  amount     Float
+  donor      String
+  signature  String   @unique
+  timestamp  DateTime
 }
