@@ -169,3 +169,61 @@ export const getCampaign: RequestHandler = async (req, res) => {
     return;
   }
 };
+
+export const getUserCampaigns: RequestHandler = async (req, res) => {
+  try {
+    const user = (req as any).user;
+    if (!user) {
+      res.status(401).json({
+        success: false,
+        error: "User not authenticated",
+      });
+      return;
+    }
+    const campaigns = await prisma.campaign.findMany({
+      where: { userId: user.id },
+      include: {
+        _count: {
+          select: { donations: true },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    const campaignsWithStats = campaigns.map((campaign) => ({
+      id: campaign.id,
+      title: campaign.title,
+      description: campaign.description,
+      recipient: campaign.recipient,
+      imageUrl: campaign.imageUrl,
+      goal: campaign.goal,
+      slug: campaign.slug,
+      totalRaised: campaign.totalRaised,
+      active: campaign.active,
+      createdAt: campaign.createdAt,
+      donationCount: campaign._count.donations,
+      progressPercentage: Math.min(
+        (campaign.totalRaised / campaign.goal) * 100,
+        100
+      ),
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: {
+        campaigns: campaignsWithStats,
+        totalCampaigns: campaigns.length,
+        activeCampaigns: campaigns.filter((c) => c.active).length,
+      },
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+    return;
+  }
+};
