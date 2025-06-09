@@ -66,3 +66,57 @@ export const signin: RequestHandler = async (req, res) => {
     return;
   }
 };
+
+export const verify: RequestHandler = async (req, res) => {
+  const token = req.headers["authorization"];
+  if (!token) {
+    res.status(403).json({
+      success: false,
+      error: "You are not logged in",
+    });
+    return;
+  }
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as {
+      userId: string;
+      publicKey: string;
+    };
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: decoded.userId,
+      },
+    });
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        error: "User not found",
+      });
+      return;
+    }
+    res.status(200).json({
+      success: true,
+      data: {
+        valid: true,
+        user: {
+          id: user.id,
+        },
+      },
+    });
+    return;
+  } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      res.status(401).json({
+        success: false,
+        error: "Invalid token",
+      });
+      return;
+    }
+    res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+    return;
+  }
+};
