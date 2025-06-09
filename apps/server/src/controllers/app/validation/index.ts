@@ -1,14 +1,6 @@
 import { z } from "zod";
 import bs58 from "bs58";
 
-const imageUrlSchema = z
-  .string()
-  .url("Invalid image URL")
-  .regex(
-    /\.(jpg|jpeg|png|gif|webp)$/i,
-    "Image URL must end with a valid image extension"
-  );
-
 export const createCampaignSchema = z
   .object({
     title: z.string().min(2, "Title must be at least 2 characters").trim(),
@@ -26,7 +18,7 @@ export const createCampaignSchema = z
         message: "Invalid base58 encoded string",
       }
     ),
-    imageUrl: imageUrlSchema,
+    imageUrl: z.string().url("Invalid image URL"),
     goal: z
       .number()
       .positive("Goal must be a positive number")
