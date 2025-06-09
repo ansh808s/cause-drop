@@ -27,7 +27,7 @@ model Campaign {
   userId      String     @map("user_id")
   user        User       @relation(fields: [userId], references: [id])
   goal        Float
-  totalRaised Float      @map("total_raised")
+  totalRaised Float      @default(0) @map("total_raised")
   active      Boolean    @default(true)
   donations   Donation[]
 }
