@@ -3,6 +3,7 @@ import prisma from "prisma";
 import jwt from "jsonwebtoken";
 import { signinSchema } from "./validation";
 import { verifySignature } from "utils/verifySignature";
+import { getSignedFileUrl } from "@/services/aws";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -113,6 +114,40 @@ export const verify: RequestHandler = async (req, res) => {
       });
       return;
     }
+    res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+    return;
+  }
+};
+
+export const signedURL: RequestHandler = async (req, res) => {
+  const user = (req as any).user;
+  if (!user) {
+    res.status(404).json({
+      success: false,
+      error: "User not found",
+    });
+    return;
+  }
+  const userId = user.id;
+  const fileType = req.query.mime || "jpg";
+  const fileName = `${userId}/${Math.random()}/${Date.now()}.${fileType}`;
+  try {
+    const url = await getSignedFileUrl({
+      fileName,
+      expiresIn: 60 * 10,
+    });
+    res.status(200).json({
+      success: true,
+      data: {
+        url,
+        fileName,
+      },
+    });
+    return;
+  } catch (error) {
     res.status(500).json({
       success: false,
       error: "Internal server error",
