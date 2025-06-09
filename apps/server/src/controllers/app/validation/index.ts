@@ -25,3 +25,16 @@ export const createCampaignSchema = z
       .min(0.001, "Goal must be at least 0.001 SOL"),
   })
   .strict();
+
+export const getCampaignSchema = z
+  .object({
+    slug: z
+      .string()
+      .min(1, "Slug is required")
+      .max(150, "Slug too long")
+      .regex(
+        /^[a-z0-9-]+$/,
+        "Slug can only contain lowercase letters, numbers, and hyphens"
+      ),
+  })
+  .strict();
