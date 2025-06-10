@@ -28,3 +28,11 @@ export interface DetailedCampaign extends Campaign {
     address: string;
   };
 }
+
+export interface CampaignStats {
+  totalRaised: number;
+  donationCount: number;
+  averageDonation: number;
+  largestDonation: number;
+  progressPercentage: number;
+}
