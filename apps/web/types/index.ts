@@ -62,3 +62,9 @@ export interface GetCampaignResponse {
   stats: CampaignStats;
   recentDonations: RecentDonation[];
 }
+
+export interface GetCampaignsResponse {
+  campaigns: CampaignWithStats[];
+  totalCampaigns: number;
+  activeCampaigns: number;
+}
