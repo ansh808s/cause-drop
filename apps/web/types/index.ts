@@ -36,3 +36,11 @@ export interface CampaignStats {
   largestDonation: number;
   progressPercentage: number;
 }
+
+export interface RecentDonation {
+  id: string;
+  amount: number;
+  donor: string;
+  timestamp: string;
+  signature: string;
+}
