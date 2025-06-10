@@ -56,3 +56,9 @@ export interface CreateCampaignRequest {
 export interface CreateCampaignResponse {
   campaign: Campaign;
 }
+
+export interface GetCampaignResponse {
+  campaign: DetailedCampaign;
+  stats: CampaignStats;
+  recentDonations: RecentDonation[];
+}
