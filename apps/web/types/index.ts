@@ -16,3 +16,8 @@ export interface Campaign {
   active: boolean;
   createdAt: string;
 }
+
+export interface CampaignWithStats extends Campaign {
+  donationCount: number;
+  progressPercentage: number;
+}
