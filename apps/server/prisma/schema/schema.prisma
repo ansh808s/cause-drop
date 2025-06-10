@@ -22,7 +22,7 @@ model Campaign {
   description String
   recipient   String
   slug        String     @unique
-  imageUrl    String     @map("image_url")
+  imageUrl    String?    @map("image_url")
   createdAt   DateTime   @default(now()) @map("created_at")
   userId      String     @map("user_id")
   user        User       @relation(fields: [userId], references: [id])

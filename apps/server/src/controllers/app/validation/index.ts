@@ -18,7 +18,7 @@ export const createCampaignSchema = z
         message: "Invalid base58 encoded string",
       }
     ),
-    imageUrl: z.string().url("Invalid image URL"),
+    imageUrl: z.string().url("Invalid image URL").optional(),
     goal: z
       .number()
       .positive("Goal must be a positive number")
