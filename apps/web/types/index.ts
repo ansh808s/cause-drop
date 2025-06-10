@@ -21,3 +21,10 @@ export interface CampaignWithStats extends Campaign {
   donationCount: number;
   progressPercentage: number;
 }
+
+export interface DetailedCampaign extends Campaign {
+  creator: {
+    id: string;
+    address: string;
+  };
+}
