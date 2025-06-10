@@ -4,7 +4,7 @@ import {
   type CampaignStats,
   type DetailedCampaign,
   type RecentDonation,
-} from "../../../types";
+} from "../../types/campaign";
 
 interface CampaignState {
   campaigns: Campaign[];
