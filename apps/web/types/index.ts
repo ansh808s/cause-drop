@@ -44,3 +44,15 @@ export interface RecentDonation {
   timestamp: string;
   signature: string;
 }
+
+export interface CreateCampaignRequest {
+  title: string;
+  description: string;
+  recipient: string;
+  imageUrl?: string;
+  goal: number;
+}
+
+export interface CreateCampaignResponse {
+  campaign: Campaign;
+}
