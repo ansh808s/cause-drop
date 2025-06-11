@@ -3,10 +3,15 @@ import { apiClient } from "@/lib/api-client";
 import { useAppDispatch } from "@/store";
 import {
   setCampaigns,
+  setCampaignDetails,
   setLoading,
   setError,
 } from "@/store/slices/campaignSlice";
-import { type ApiResponse, type GetCampaignsResponse } from "../types/campaign";
+import {
+  type ApiResponse,
+  type GetCampaignResponse,
+  type GetCampaignsResponse,
+} from "../types/campaign";
 
 export const campaignKeys = {
   all: ["campaigns"] as const,
@@ -44,5 +49,39 @@ export const useGetCampaigns = () => {
         throw error;
       }
     },
+  });
+};
+
+export const useGetCampaign = (slug: string) => {
+  const dispatch = useAppDispatch();
+
+  return useQuery({
+    queryKey: campaignKeys.detail(slug),
+    queryFn: async () => {
+      dispatch(setLoading(true));
+      try {
+        const response = await apiClient.get<ApiResponse<GetCampaignResponse>>(
+          `/api/app/campaign/${slug}`
+        );
+
+        dispatch(
+          setCampaignDetails({
+            campaign: response.data.campaign,
+            stats: response.data.stats,
+            recentDonations: response.data.recentDonations,
+          })
+        );
+
+        return response.data;
+      } catch (error: any) {
+        dispatch(
+          setError(error.response?.data?.message || "Failed to fetch campaign")
+        );
+        throw error;
+      }
+    },
+    enabled: !!slug,
+    staleTime: 30 * 1000,
+    gcTime: 5 * 60 * 1000,
   });
 };
