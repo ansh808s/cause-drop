@@ -5,9 +5,11 @@ import {
   useSelector,
 } from "react-redux";
 import campaignSlice from "./slices/campaignSlice";
+import authSlice from "./slices/authSlice";
 
 export const store = configureStore({
   reducer: {
+    auth: authSlice,
     campaign: campaignSlice,
   },
   middleware: (getDefaultMiddleware) =>
