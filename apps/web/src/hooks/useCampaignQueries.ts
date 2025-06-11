@@ -1,0 +1,48 @@
+import { useQuery } from "@tanstack/react-query";
+import { apiClient } from "@/lib/api-client";
+import { useAppDispatch } from "@/store";
+import {
+  setCampaigns,
+  setLoading,
+  setError,
+} from "@/store/slices/campaignSlice";
+import { type ApiResponse, type GetCampaignsResponse } from "../types/campaign";
+
+export const campaignKeys = {
+  all: ["campaigns"] as const,
+  lists: () => [...campaignKeys.all, "list"] as const,
+  list: (filters?: any) => [...campaignKeys.lists(), filters] as const,
+  details: () => [...campaignKeys.all, "detail"] as const,
+  detail: (slug: string) => [...campaignKeys.details(), slug] as const,
+};
+
+export const useGetCampaigns = () => {
+  const dispatch = useAppDispatch();
+
+  return useQuery({
+    queryKey: campaignKeys.lists(),
+    queryFn: async () => {
+      dispatch(setLoading(true));
+      try {
+        const response = await apiClient.get<ApiResponse<GetCampaignsResponse>>(
+          "/api/app/campaign"
+        );
+
+        dispatch(
+          setCampaigns({
+            campaigns: response.data.campaigns,
+            totalCampaigns: response.data.totalCampaigns,
+            activeCampaigns: response.data.activeCampaigns,
+          })
+        );
+
+        return response.data;
+      } catch (error: any) {
+        dispatch(
+          setError(error.response?.data?.message || "Failed to fetch campaigns")
+        );
+        throw error;
+      }
+    },
+  });
+};
