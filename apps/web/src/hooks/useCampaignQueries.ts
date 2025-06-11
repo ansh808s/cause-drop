@@ -1,14 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 import { useAppDispatch } from "@/store";
 import {
   setCampaigns,
   setCampaignDetails,
+  addCampaign,
   setLoading,
+  setCreateCampaignLoading,
   setError,
 } from "@/store/slices/campaignSlice";
 import {
   type ApiResponse,
+  type CreateCampaignRequest,
+  type CreateCampaignResponse,
   type GetCampaignResponse,
   type GetCampaignsResponse,
 } from "../types/campaign";
@@ -83,5 +87,31 @@ export const useGetCampaign = (slug: string) => {
     enabled: !!slug,
     staleTime: 30 * 1000,
     gcTime: 5 * 60 * 1000,
+  });
+};
+
+export const useCreateCampaign = () => {
+  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
+
+  return useMutation({
+    mutationFn: async (data: CreateCampaignRequest) => {
+      dispatch(setCreateCampaignLoading(true));
+      const response = await apiClient.post<
+        ApiResponse<CreateCampaignResponse>
+      >("/api/app/campaign", data);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      dispatch(addCampaign(data.campaign));
+
+      queryClient.invalidateQueries({ queryKey: campaignKeys.lists() });
+    },
+    onError: (error: any) => {
+      dispatch(setCreateCampaignLoading(false));
+      dispatch(
+        setError(error.response?.data?.message || "Failed to create campaign")
+      );
+    },
   });
 };
