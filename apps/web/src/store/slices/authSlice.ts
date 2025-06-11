@@ -74,8 +74,11 @@ const authSlice = createSlice({
       }
     },
 
-    setUser: (state, action: PayloadAction<User>) => {
-      state.user = action.payload;
+    setUser: (state, action: PayloadAction<{ id: string }>) => {
+      state.user = {
+        id: action.payload.id,
+        createdAt: new Date().toISOString(),
+      };
       state.isAuthenticated = true;
     },
   },
