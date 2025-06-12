@@ -106,15 +106,6 @@ export default function LandingPage() {
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
-              <Link href="/campaigns">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="px-8 py-4 text-lg border-2"
-                >
-                  Browse Campaigns
-                </Button>
-              </Link>
             </div>
           </div>
         </div>
