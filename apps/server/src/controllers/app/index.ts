@@ -3,6 +3,7 @@ import prisma from "prisma";
 import { createCampaignSchema, getCampaignSchema } from "./validation";
 import { generateSlug } from "utils/generateSlug";
 import { PublicKey } from "@solana/web3.js";
+import { getSignedFileUrl } from "@/services/aws";
 
 export const createCampaign: RequestHandler = async (req, res) => {
   const validatedData = createCampaignSchema.safeParse(req.body);
@@ -216,6 +217,40 @@ export const getUserCampaigns: RequestHandler = async (req, res) => {
         campaigns: campaignsWithStats,
         totalCampaigns: campaigns.length,
         activeCampaigns: campaigns.filter((c) => c.active).length,
+      },
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+    return;
+  }
+};
+
+export const signedURL: RequestHandler = async (req, res) => {
+  const user = (req as any).user;
+  if (!user) {
+    res.status(404).json({
+      success: false,
+      error: "User not found",
+    });
+    return;
+  }
+  const userId = user.id;
+  const fileType = req.query.mime || "jpg";
+  const fileName = `${userId}/${Math.random()}/${Date.now()}.${fileType}`;
+  try {
+    const url = await getSignedFileUrl({
+      fileName,
+      expiresIn: 60 * 10,
+    });
+    res.status(200).json({
+      success: true,
+      data: {
+        url,
+        fileName,
       },
     });
     return;
