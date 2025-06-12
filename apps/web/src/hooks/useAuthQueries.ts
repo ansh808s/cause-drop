@@ -14,14 +14,22 @@ import type {
   SignInResponseData,
   VerifyTokenResponseData,
 } from "@/types/auth";
+import type { ApiResponse } from "@/types/campaign";
 
 const authApi = {
-  signIn: async (data: SignInRequest): Promise<SignInResponseData> => {
-    return apiClient.post<SignInResponseData>("/api/auth/signin", data);
+  signIn: async (signInData: SignInRequest): Promise<SignInResponseData> => {
+    const response = await apiClient.post<ApiResponse<SignInResponseData>>(
+      "/api/auth/signin",
+      signInData
+    );
+    return response.data;
   },
 
   verifyToken: async (): Promise<VerifyTokenResponseData> => {
-    return apiClient.post<VerifyTokenResponseData>("/api/auth/verify");
+    const response = await apiClient.post<ApiResponse<VerifyTokenResponseData>>(
+      "/api/auth/verify"
+    );
+    return response.data;
   },
 };
 
