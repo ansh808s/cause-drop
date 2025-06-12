@@ -68,3 +68,8 @@ export interface GetCampaignsResponse {
   totalCampaigns: number;
   activeCampaigns: number;
 }
+
+export interface GetSignedUrlResponse {
+  url: string;
+  fileName: string;
+}
