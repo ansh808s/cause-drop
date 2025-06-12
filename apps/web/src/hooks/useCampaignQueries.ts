@@ -15,6 +15,7 @@ import {
   type CreateCampaignResponse,
   type GetCampaignResponse,
   type GetCampaignsResponse,
+  type GetSignedUrlResponse,
 } from "../types/campaign";
 
 export const campaignKeys = {
@@ -23,6 +24,8 @@ export const campaignKeys = {
   list: (filters?: any) => [...campaignKeys.lists(), filters] as const,
   details: () => [...campaignKeys.all, "detail"] as const,
   detail: (slug: string) => [...campaignKeys.details(), slug] as const,
+  signedUrl: (mime: string) =>
+    [...campaignKeys.all, "signedUrl", mime] as const,
 };
 
 export const useGetCampaigns = () => {
@@ -104,7 +107,6 @@ export const useCreateCampaign = () => {
     },
     onSuccess: (data) => {
       dispatch(addCampaign(data.campaign));
-
       queryClient.invalidateQueries({ queryKey: campaignKeys.lists() });
     },
     onError: (error: any) => {
@@ -112,6 +114,51 @@ export const useCreateCampaign = () => {
       dispatch(
         setError(error.response?.data?.message || "Failed to create campaign")
       );
+    },
+  });
+};
+
+export const useGetSignedUrl = () => {
+  return useMutation({
+    mutationFn: async (mimeType: string) => {
+      const response = await apiClient.get<ApiResponse<GetSignedUrlResponse>>(
+        `/api/app/signedurl?mime=${mimeType}`
+      );
+      return response.data;
+    },
+    onError: (error: any) => {
+      console.error("Failed to get signed URL:", error);
+      throw error;
+    },
+  });
+};
+
+export const useUploadToS3 = () => {
+  return useMutation({
+    mutationFn: async ({
+      signedUrl,
+      file,
+    }: {
+      signedUrl: string;
+      file: File;
+    }) => {
+      const response = await fetch(signedUrl, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload file to S3");
+      }
+
+      return response;
+    },
+    onError: (error: any) => {
+      console.error("Failed to upload to S3:", error);
+      throw error;
     },
   });
 };
