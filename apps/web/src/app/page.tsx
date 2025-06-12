@@ -71,7 +71,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
           <div className="text-center">
@@ -119,14 +118,8 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
-
-        {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-emerald-200 dark:bg-emerald-800 rounded-full opacity-20 animate-bounce"></div>
-        <div className="absolute top-40 right-10 w-16 h-16 bg-green-200 dark:bg-green-800 rounded-full opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-emerald-300 dark:bg-emerald-700 rounded-full opacity-20 animate-bounce delay-500"></div>
       </section>
 
-      {/* How It Works */}
       <section className="py-20 bg-white dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -184,7 +177,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Why Solana */}
       <section className="py-20 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -248,7 +240,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section
         className="py-20 bg-gradient-to-r from-emerald-600 to-green-700"
         style={{ backgroundColor: "#184b43" }}
@@ -273,7 +264,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-gray-900 dark:bg-gray-950 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
