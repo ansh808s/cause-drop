@@ -5,7 +5,7 @@ import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { useAuthQueries } from "@/hooks/useAuthQueries";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import bs58 from "bs58";
+import { useEffect, useState } from "react";
 
 export const generateSignInMessage = (publicKey: string): string => {
   const timestamp = new Date().toISOString();
@@ -16,6 +16,12 @@ export const SignInButton = () => {
   const { publicKey, signMessage } = useWallet();
   const { setVisible } = useWalletModal();
   const { isAuthenticated, signIn, isSigningIn, logoutUser } = useAuthQueries();
+  const [authToken, setAuthtoken] = useState<string>("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined")
+      setAuthtoken(localStorage.getItem("auth_token") || "");
+  }, []);
 
   const handleSignIn = async () => {
     if (!publicKey || !signMessage) {
@@ -30,7 +36,7 @@ export const SignInButton = () => {
 
       await signIn({
         publicKey: publicKey.toString(),
-        signature: bs58.encode(signature),
+        signature: Buffer.from(signature).toString("base64"),
         message,
       });
 
@@ -46,7 +52,7 @@ export const SignInButton = () => {
     toast.success("Successfully signed out!");
   };
 
-  if (isAuthenticated) {
+  if (isAuthenticated || authToken) {
     return (
       <Button onClick={handleSignOut} variant="outline">
         Sign Out
