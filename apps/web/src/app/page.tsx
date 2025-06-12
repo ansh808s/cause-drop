@@ -284,7 +284,11 @@ export default function LandingPage() {
               <span className="text-xl font-bold">CauseDrop</span>
             </div>
             <div className="flex space-x-6 text-sm text-gray-400">
-              <a href="#" className="hover:text-white transition-colors">
+              <a
+                href="https://github.com/ansh808s/cause-drop"
+                target="_blank"
+                className="hover:text-white transition-colors"
+              >
                 Github
               </a>
             </div>
