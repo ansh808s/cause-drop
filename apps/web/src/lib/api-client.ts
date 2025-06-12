@@ -2,7 +2,7 @@ import axios, { type AxiosInstance, type AxiosResponse } from "axios";
 import { store } from "@/store";
 import { logout } from "@/store/slices/authSlice";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 class ApiClient {
   private client: AxiosInstance;
