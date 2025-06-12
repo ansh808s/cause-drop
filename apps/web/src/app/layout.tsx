@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "../index.css";
 import Providers from "@/components/providers";
-import Header from "@/components/navbar";
+import Navbar from "@/components/navbar";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={` ${manrope.variable} antialiased`}>
         <Providers>
           <div className="grid grid-rows-[auto_1fr] h-svh">
-            <Header />
+            <Navbar />
             {children}
           </div>
         </Providers>
