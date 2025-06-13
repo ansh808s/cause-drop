@@ -9,8 +9,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Upload, Sparkles } from "lucide-react";
 
-import { useCreateCampaign } from "@/hooks/useCampaignQueries";
+import {
+  useCreateCampaign,
+  useGetSignedUrl,
+  useUploadToS3,
+} from "@/hooks/useCampaignQueries";
 import { useAppSelector } from "@/store";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { MAX_FILE_SIZE } from "@/lib/constants";
+import { toast } from "sonner";
+
+const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
 
 const campaignSchema = z.object({
   title: z
@@ -27,8 +36,7 @@ const campaignSchema = z.object({
     .number()
     .min(0.1, "Goal must be at least 0.1 SOL")
     .max(10000, "Goal must be less than 10,000 SOL"),
-  imageUrl: z.string().optional(),
-  recipient: z.string().min(1, "Recipient address is required"),
+  imageUrl: z.string(),
 });
 
 type CampaignFormData = z.infer<typeof campaignSchema>;
@@ -40,8 +48,15 @@ interface CampaignFormProps {
 const CampaignForm: React.FC<CampaignFormProps> = ({ onSuccess }) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+
+  const { publicKey } = useWallet();
 
   const createCampaignMutation = useCreateCampaign();
+  const getSignedUrlMutation = useGetSignedUrl();
+  const uploadToS3Mutation = useUploadToS3();
+
   const { createCampaignLoading, error } = useAppSelector(
     (state) => state.campaign
   );
@@ -49,7 +64,7 @@ const CampaignForm: React.FC<CampaignFormProps> = ({ onSuccess }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     watch,
     setValue,
     reset,
@@ -61,14 +76,13 @@ const CampaignForm: React.FC<CampaignFormProps> = ({ onSuccess }) => {
       description: "",
       goal: 0,
       imageUrl: "",
-      recipient: "",
     },
   });
 
   const watchedFields = watch();
 
   const calculateProgress = (): number => {
-    const requiredFields = ["title", "description", "goal", "recipient"];
+    const requiredFields = ["title", "description", "goal"];
     const filledFields = requiredFields.filter((field) => {
       const value = watchedFields[field as keyof CampaignFormData];
       return (
@@ -86,13 +100,8 @@ const CampaignForm: React.FC<CampaignFormProps> = ({ onSuccess }) => {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 10 * 1024 * 1024) {
+      if (file.size > MAX_FILE_SIZE) {
         alert("File size must be less than 10MB");
-        return;
-      }
-
-      if (!file.type.startsWith("image/")) {
-        alert("Please select an image file");
         return;
       }
 
@@ -106,12 +115,32 @@ const CampaignForm: React.FC<CampaignFormProps> = ({ onSuccess }) => {
     }
   };
 
-  const uploadImage = async (file: File): Promise<string> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("https://via.placeholder.com/400x200");
-      }, 1000);
-    });
+  const uploadImageToS3 = async (file: File): Promise<string> => {
+    try {
+      setIsUploading(true);
+      setUploadProgress(0);
+
+      const signedUrlResponse = await getSignedUrlMutation.mutateAsync(
+        file.type.split("/")[1]
+      );
+      setUploadProgress(25);
+      await uploadToS3Mutation.mutateAsync({
+        signedUrl: signedUrlResponse.url,
+        file: file,
+      });
+      setUploadProgress(75);
+
+      const uploadedUrl = `${CDN_URL}/${signedUrlResponse.fileName}`;
+      setUploadProgress(100);
+
+      return uploadedUrl;
+    } catch (error) {
+      toast.error("Failed to upload image");
+      throw new Error("Failed to upload image");
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
   };
 
   const onSubmit = async (data: CampaignFormData) => {
@@ -119,20 +148,20 @@ const CampaignForm: React.FC<CampaignFormProps> = ({ onSuccess }) => {
       let imageUrl = data.imageUrl;
 
       if (imageFile) {
-        imageUrl = await uploadImage(imageFile);
+        imageUrl = await uploadImageToS3(imageFile);
+        setValue("imageUrl", imageUrl);
       }
 
       const campaignData = {
         title: data.title,
         description: data.description,
         goal: data.goal,
-        recipient: data.recipient,
         imageUrl,
+        recipient: publicKey!.toString(),
       };
 
       await createCampaignMutation.mutateAsync(campaignData);
 
-      // Reset form on success
       reset();
       setImagePreview(null);
       setImageFile(null);
@@ -142,6 +171,8 @@ const CampaignForm: React.FC<CampaignFormProps> = ({ onSuccess }) => {
       console.error("Error creating campaign:", error);
     }
   };
+
+  const isFormLoading = createCampaignLoading || isUploading;
 
   return (
     <Card className="dark:bg-gray-800">
@@ -186,7 +217,6 @@ const CampaignForm: React.FC<CampaignFormProps> = ({ onSuccess }) => {
             )}
           </div>
 
-          {/* Goal Field */}
           <div>
             <Label htmlFor="goal" className="dark:text-gray-200">
               Fundraising Goal (SOL) *
@@ -205,25 +235,6 @@ const CampaignForm: React.FC<CampaignFormProps> = ({ onSuccess }) => {
             )}
           </div>
 
-          {/* Recipient Field */}
-          <div>
-            <Label htmlFor="recipient" className="dark:text-gray-200">
-              Recipient Address *
-            </Label>
-            <Input
-              id="recipient"
-              placeholder="Solana wallet address"
-              {...register("recipient")}
-              className="mt-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
-            {errors.recipient && (
-              <p className="text-sm text-red-500 mt-1">
-                {errors.recipient.message}
-              </p>
-            )}
-          </div>
-
-          {/* Image Upload Field */}
           <div>
             <Label htmlFor="image" className="dark:text-gray-200">
               Campaign Image *
@@ -253,35 +264,40 @@ const CampaignForm: React.FC<CampaignFormProps> = ({ onSuccess }) => {
                   />
                 </label>
               </div>
-              {imagePreview && (
+              {isUploading && (
                 <div className="mt-4">
+                  <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    <span>Uploading...</span>
+                    <span>{uploadProgress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div
+                      className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+              {imagePreview && !isUploading && (
+                <div className="mt-4 flex items-center justify-center">
                   <img
                     src={imagePreview}
                     alt="Campaign preview"
-                    className="w-full h-48 object-cover rounded-lg"
+                    className="w-[35%] h-auto object-cover rounded-lg"
                   />
                 </div>
-              )}
-              {!imageFile && (
-                <p className="text-sm text-red-500 mt-1">
-                  Campaign image is required
-                </p>
               )}
             </div>
           </div>
 
-          {/* Error Display */}
           {error && <div className="text-sm text-red-500 mt-2">{error}</div>}
 
-          {/* Submit Button */}
           <Button
             type="submit"
             className="w-full mt-6 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
-            disabled={
-              createCampaignLoading || calculateProgress() < 100 || !imageFile
-            }
+            disabled={isFormLoading || calculateProgress() < 100 || !imageFile}
           >
-            {createCampaignLoading ? (
+            {isFormLoading ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                 Creating Campaign...

@@ -99,6 +99,7 @@ export const verify: RequestHandler = async (req, res) => {
       success: true,
       data: {
         valid: true,
+        token,
         user: {
           id: user.id,
         },
