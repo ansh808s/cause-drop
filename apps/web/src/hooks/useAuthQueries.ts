@@ -7,6 +7,7 @@ import {
   authFailure,
   setUser,
   logout,
+  initializeAuth,
 } from "@/store/slices/authSlice";
 import { apiClient } from "@/lib/api-client";
 import type {
@@ -65,11 +66,14 @@ export const useAuthQueries = () => {
     mutationFn: authApi.verifyToken,
     onSuccess: (data) => {
       if (data.valid) {
+        const { token, user } = data;
+        dispatch(authSuccess({ token, user }));
         dispatch(
           setUser({
             id: data.user.id,
           })
         );
+        dispatch(initializeAuth());
       } else {
         dispatch(logout());
       }
@@ -88,6 +92,10 @@ export const useAuthQueries = () => {
     queryClient.clear();
   };
 
+  const verifyToken = async () => {
+    return verifyTokenMutation.mutateAsync();
+  };
+
   const isVerifyingToken = verifyTokenMutation.isPending;
 
   return {
@@ -98,6 +106,7 @@ export const useAuthQueries = () => {
     error,
     signIn,
     logoutUser,
+    verifyToken,
     isSigningIn: signInMutation.isPending,
     signInError: signInMutation.error,
     isVerifyingToken,
