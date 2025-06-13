@@ -1,15 +1,13 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Upload, Heart, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import CampaignForm from "@/components/campaign-form";
+import { withAuth } from "@/components/with-auth";
 
-export default function CreateCampaign() {
-  const router = useRouter();
-
+const CreateCampaign = () => {
   return (
     <div className=" bg-gradient-to-br from-emerald-50 via-green-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Confetti Animation
@@ -39,6 +37,7 @@ export default function CreateCampaign() {
           <p className="text-gray-600 dark:text-gray-300">
             Tell your story and start raising funds on Solana
           </p>
+          {/* Progress Bar */}
         </div>
 
         {/* Single Column Form */}
@@ -63,4 +62,6 @@ export default function CreateCampaign() {
       </div>
     </div>
   );
-}
+};
+
+export default withAuth(CreateCampaign);
