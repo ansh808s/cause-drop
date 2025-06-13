@@ -1,16 +1,16 @@
 import cors from "cors";
 import express from "express";
 import { router } from "./routers";
-
 const app = express();
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "localhost:3001",
+    origin: "*",
   })
 );
 
 app.use(express.json());
+
 app.use("/api", router);
 
 app.get("/", (_req, res) => {
