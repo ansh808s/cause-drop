@@ -1,6 +1,5 @@
 import axios, { type AxiosInstance, type AxiosResponse } from "axios";
 import { store } from "@/store";
-import { logout } from "@/store/slices/authSlice";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -34,9 +33,6 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response: AxiosResponse) => response,
       (error) => {
-        if (error.response?.status === 401) {
-          store.dispatch(logout());
-        }
         return Promise.reject(error);
       }
     );
