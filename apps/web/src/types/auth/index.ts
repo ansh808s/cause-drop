@@ -1,6 +1,6 @@
 export interface User {
   id: string;
-  createdAt: string;
+  createdAt?: string;
 }
 export interface SignInRequest {
   publicKey: string;
@@ -16,4 +16,5 @@ export interface SignInResponseData {
 export interface VerifyTokenResponseData {
   valid: boolean;
   user: Pick<User, "id">;
+  token: string;
 }
