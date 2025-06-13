@@ -2,7 +2,7 @@ import type { RequestHandler } from "express";
 import prisma from "prisma";
 import jwt from "jsonwebtoken";
 import { signinSchema } from "./validation";
-import { verifySignature } from "utils/verifySignature";
+import { verifySignature } from "@/utils/verifySignature";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 

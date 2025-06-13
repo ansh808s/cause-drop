@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import prisma from "prisma";
 import { createCampaignSchema, getCampaignSchema } from "./validation";
-import { generateSlug } from "utils/generateSlug";
+import { generateSlug } from "@/utils/generateSlug";
 import { PublicKey } from "@solana/web3.js";
 import { getSignedFileUrl } from "@/services/aws";
 
