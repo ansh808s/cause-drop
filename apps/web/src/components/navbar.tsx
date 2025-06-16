@@ -58,9 +58,7 @@ export default function Navbar() {
             </DropdownMenu>
 
             <ModeToggle />
-            <Button className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700">
-              Sign In
-            </Button>
+            <SignInButton />
           </div>
 
           <div className="md:hidden flex items-center space-x-2">
