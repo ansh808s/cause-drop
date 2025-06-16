@@ -66,7 +66,7 @@ export const SignInButton = () => {
       disabled={isSigningIn}
       className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700"
     >
-      {isSigningIn ? "Signing In..." : "Sign In"}
+      {publicKey ? "Authenticate" : isSigningIn ? "Signing In..." : "Sign In"}
     </Button>
   );
 };
