@@ -25,8 +25,9 @@ import {
 import Link from "next/link";
 import { useAppSelector } from "@/store";
 import { useGetCampaigns } from "@/hooks/useCampaignQueries";
+import { withAuth } from "@/components/with-auth";
 
-export default function MyCampaigns() {
+const MyCampaigns = () => {
   // Redux state
   const { campaigns, totalCampaigns, activeCampaigns, isLoading, error } =
     useAppSelector((state) => state.campaign);
@@ -298,4 +299,5 @@ export default function MyCampaigns() {
       </div>
     </div>
   );
-}
+};
+export default withAuth(MyCampaigns);
