@@ -11,8 +11,9 @@ app.use(
   })
 );
 
+app.use(express.json());
+
 const getActionsJson: RequestHandler = (req, res) => {
-  console.log("hi");
   const payload = {
     rules: [
       { pathPattern: "/*", apiPath: "/api/actions/*" },
