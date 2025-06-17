@@ -96,6 +96,6 @@ export const getCampaignAction: RequestHandler = async (req, res) => {
   }
 };
 
-export const options: RequestHandler = (req, res) => {
+export const donationOption: RequestHandler = (req, res) => {
   res.set(headers).json(null);
 };
