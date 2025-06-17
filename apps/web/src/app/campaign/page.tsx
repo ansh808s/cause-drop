@@ -3,35 +3,16 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import {
-  Plus,
-  Calendar,
-  Eye,
-  Share2,
-  MoreVertical,
-  Edit,
-  Trash2,
-  Loader2,
-  RefreshCw,
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Plus, Calendar, Eye, Share2, Loader2, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useAppSelector } from "@/store";
 import { useGetCampaigns } from "@/hooks/useCampaignQueries";
 import { withAuth } from "@/components/with-auth";
 
 const MyCampaigns = () => {
-  // Redux state
   const { campaigns, totalCampaigns, activeCampaigns, isLoading, error } =
     useAppSelector((state) => state.campaign);
-  // Fetch campaigns data
   const {
     data,
     isLoading: queryLoading,
@@ -63,8 +44,6 @@ const MyCampaigns = () => {
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      // You could add a toast notification here
-      console.log("Copied to clipboard:", text);
     } catch (err) {
       console.error("Failed to copy:", err);
     }
@@ -75,7 +54,6 @@ const MyCampaigns = () => {
     copyToClipboard(shareUrl);
   };
 
-  // Loading state
   if (loading && campaigns.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -155,7 +133,6 @@ const MyCampaigns = () => {
           </div>
         )}
 
-        {/* Campaigns Grid */}
         {campaigns.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {campaigns.map((campaign) => (
@@ -189,34 +166,6 @@ const MyCampaigns = () => {
                         </Badge>
                       </div>
                     </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="opacity-0 group-hover:opacity-100"
-                        >
-                          <MoreVertical className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Edit className="w-4 h-4 mr-2" />
-                          Edit Campaign
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleShare(campaign)}
-                          className="text-emerald-600"
-                        >
-                          <Share2 className="w-4 h-4 mr-2" />
-                          Share Campaign
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Delete Campaign
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
@@ -224,7 +173,6 @@ const MyCampaigns = () => {
                     {truncateDescription(campaign.description)}
                   </p>
 
-                  {/* Progress Section */}
                   <div className="mb-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
