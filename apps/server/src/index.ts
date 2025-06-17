@@ -1,6 +1,8 @@
 import cors from "cors";
-import express from "express";
+import express, { type RequestHandler } from "express";
 import { router } from "./routers";
+import { actionCorsMiddleware } from "@solana/actions";
+
 const app = express();
 
 app.use(
@@ -9,7 +11,22 @@ app.use(
   })
 );
 
-app.use(express.json());
+const getActionsJson: RequestHandler = (req, res) => {
+  console.log("hi");
+  const payload = {
+    rules: [
+      { pathPattern: "/*", apiPath: "/api/actions/*" },
+      { pathPattern: "/api/actions/**", apiPath: "/api/actions/**" },
+    ],
+  };
+  res.json(payload);
+  return;
+};
+
+// @ts-ignore
+app.use(actionCorsMiddleware());
+
+app.get("/actions.json", getActionsJson);
 
 app.use("/api", router);
 
