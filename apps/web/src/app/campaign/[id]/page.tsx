@@ -7,13 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import {
-  Share2,
   Copy,
   Calendar,
   Award,
   ArrowLeft,
   ExternalLink,
   Loader2,
+  ArrowUpRight,
 } from "lucide-react";
 import { useGetCampaign } from "@/hooks/useCampaignQueries";
 import { useAppSelector } from "@/store";
@@ -246,10 +246,13 @@ export default function CampaignTracker() {
                     <Button
                       variant="default"
                       size="sm"
+                      onClick={() =>
+                        (window.location.href = `https://dial.to/devnet?action=${API_BASE_URL}/api/actions/donation/${campaignId}`)
+                      }
                       className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 "
                     >
-                      <Share2 className="w-4 h-4 mr-2" />
-                      Share
+                      <ArrowUpRight className="w-4 h-4 mr-2" />
+                      View Blink
                     </Button>
                   </div>
                 </div>
