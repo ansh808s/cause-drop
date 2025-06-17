@@ -235,7 +235,9 @@ export default function CampaignTracker() {
                       variant="default"
                       size="sm"
                       onClick={() =>
-                        copyToClipboard(`${API_BASE_URL}/api/actions/donation/`)
+                        copyToClipboard(
+                          `${API_BASE_URL}/api/actions/donation/${campaignId}`
+                        )
                       }
                     >
                       <Copy className="w-4 h-4 mr-2" />
